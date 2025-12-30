@@ -1,0 +1,21 @@
+In the root folder of the Project
+
+dotnet new tool-manifest
+
+dotnet tool install --local dotnet-mgcb
+
+dotnet tool install --local dotnet-mgcb-editor
+
+dotnet tool install --local dotnet-mgcb-editor-windows
+
+dotnet tool restore
+
+dotnet build
+
+dotnet tool run mgcb-editor --register
+
+dotnet tool run dotnet-mgcb --build Content/Content.mgcb
+
+<ItemGroup>
+		<MonoGameContentReference Include="..\Content\Content.mgcb" Link="Content\Content.mgcb" />
+	</ItemGroup>

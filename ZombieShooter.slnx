@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ZombieShooter.Core/ZombieShooter.Core.csproj" />
+    <Project Path="src/ZombieShooter.DesktopGL/ZombieShooter.DesktopGL.csproj" />
+  </Folder>
+</Solution>
