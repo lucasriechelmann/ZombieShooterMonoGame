@@ -14,6 +14,27 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../Assets/Source/fonts/arial/Arial_0.png
+/copy:../Assets/Source/fonts/arial/Arial_0.png;fonts/arial/Arial_0.png
+
+#begin ../Assets/Source/fonts/arial/Arial_1.png
+/copy:../Assets/Source/fonts/arial/Arial_1.png;fonts/arial/Arial_1.png
+
+#begin ../Assets/Source/fonts/arial/Arial_2.png
+/copy:../Assets/Source/fonts/arial/Arial_2.png;fonts/arial/Arial_2.png
+
+#begin ../Assets/Source/fonts/arial/Arial_3.png
+/copy:../Assets/Source/fonts/arial/Arial_3.png;fonts/arial/Arial_3.png
+
+#begin ../Assets/Source/fonts/arial/Arial_4.png
+/copy:../Assets/Source/fonts/arial/Arial_4.png;fonts/arial/Arial_4.png
+
+#begin ../Assets/Source/fonts/arial/Arial_5.png
+/copy:../Assets/Source/fonts/arial/Arial_5.png;fonts/arial/Arial_5.png
+
+#begin ../Assets/Source/fonts/arial/Arial.fnt
+/copy:../Assets/Source/fonts/arial/Arial.fnt;fonts/arial/Arial.fnt
+
 #begin ../Assets/Source/spritesheets/Sprites.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -6,6 +6,7 @@
 		<MonoGameExtendedPipelineReferencePath>../../Tools</MonoGameExtendedPipelineReferencePath>
 	</PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Gum.MonoGame" Version="2025.12.28.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="MonoGame.Extended" Version="5.3.1" />
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="5.3.1" />
@@ -15,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
+    <Folder Include="State\" />
     <Folder Include="Systems\" />
   </ItemGroup>
 </Project>

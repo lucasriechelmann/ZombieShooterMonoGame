@@ -7,28 +7,28 @@ using System;
 using System.Collections.Generic;
 using ZombieShooter.Core.Contracts;
 
-namespace ZombieShooter.Core;
+namespace ZombieShooter.Core.Scene;
 
 public abstract class SceneBase : GameScreen
 {
     protected IServiceProvider _services;
+    protected IGame _game;
     protected ContentManager _screenContent;
     protected Queue<Func<object>> _jobs = new();
-    World _world;
+    
     public bool IsInitialized { get; private set; }
     protected SceneBase(IServiceProvider serviceProvider) : base(serviceProvider.GetRequiredService<IGame>().Game)
     {
         _services = serviceProvider;
+        _game = _services.GetRequiredService<IGame>();
         _screenContent = new(serviceProvider, "Content");
     }
     public override void Initialize()
     {
         base.Initialize();
         OnInitialize();
-        _world = CreateWorld();
     }
     protected abstract void OnInitialize();
-    protected abstract World CreateWorld();
     public void AddContentToLoad<T>(string key) => _jobs.Enqueue(() => _screenContent.Load<T>(key));
     public void LoadContent(int maxPerFrame = 2)
     {
@@ -46,16 +46,9 @@ public abstract class SceneBase : GameScreen
             }
         }
 
-        IsInitialized = true;
+        IsInitialized = _jobs.Count == 0;
     }
-    public override void Update(GameTime gameTime)
-    {
-        _world?.Update(gameTime);
-    }
-    public override void Draw(GameTime gameTime)
-    {
-        _world?.Draw(gameTime);
-    }
+    
     public override void UnloadContent()
     {
         base.UnloadContent();
@@ -65,7 +58,7 @@ public abstract class SceneBase : GameScreen
     public override void Dispose()
     {
         base.Dispose();
-        _world?.Dispose();
+        
         UnloadContent();
     }
 }
