@@ -37,6 +37,8 @@ public abstract class GameECSBase : Game, IGame
         services.AddSingleton<IGame>(this);
         services.AddSingleton<GameECSBase>(this);
         services.AddSingleton(_screenManager);
+        services.AddSingleton(Services.GetRequiredService<IGraphicsDeviceService>());
+        services.AddSingleton(GraphicsDeviceManager);
         OnInitialize(services);
         _serviceProvider = services.BuildServiceProvider();
         AfterInitialize();
@@ -44,7 +46,6 @@ public abstract class GameECSBase : Game, IGame
     }
     protected abstract void OnInitialize(IServiceCollection services);
     protected abstract void AfterInitialize();
-    protected abstract World CreateWolrd();
     protected override void LoadContent()
     {
         OnLoadContent();

@@ -13,7 +13,7 @@ public abstract class SceneBase : GameScreen
 {
     protected IServiceProvider _services;
     protected IGame _game;
-    protected ContentManager _screenContent;
+    protected ContentManager _sceneContent;
     protected Queue<Func<object>> _jobs = new();
     
     public bool IsInitialized { get; private set; }
@@ -21,7 +21,7 @@ public abstract class SceneBase : GameScreen
     {
         _services = serviceProvider;
         _game = _services.GetRequiredService<IGame>();
-        _screenContent = new(serviceProvider, "Content");
+        _sceneContent = new(serviceProvider, "Content");
     }
     public override void Initialize()
     {
@@ -29,7 +29,7 @@ public abstract class SceneBase : GameScreen
         OnInitialize();
     }
     protected abstract void OnInitialize();
-    public void AddContentToLoad<T>(string key) => _jobs.Enqueue(() => _screenContent.Load<T>(key));
+    protected void AddContentToLoad<T>(string key) => _jobs.Enqueue(() => _sceneContent.Load<T>(key));
     public void LoadContent(int maxPerFrame = 2)
     {
         int processed = 0;
@@ -51,14 +51,8 @@ public abstract class SceneBase : GameScreen
     
     public override void UnloadContent()
     {
-        base.UnloadContent();
         OnUnloadContent();
+        base.UnloadContent();
     }
     protected abstract void OnUnloadContent();
-    public override void Dispose()
-    {
-        base.Dispose();
-        
-        UnloadContent();
-    }
 }

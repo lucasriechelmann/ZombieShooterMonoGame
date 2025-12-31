@@ -3,20 +3,23 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens.Transitions;
 using ZombieShooter.Core;
+using ZombieShooter.Core.Managers;
 using ZombieShooter.DesktopGL.Scenes.Menus;
+using ZombieShooter.DesktopGL.Scenes.Playing;
 
 namespace ZombieShooter.DesktopGL
 {
     public class ZombieShooterGame : GameECSBase
     {
-        protected override World CreateWolrd()
-        {
-            return new WorldBuilder()
-                .Build();
-        }
         protected override void OnInitialize(IServiceCollection services)
         {
+            #region Scenes Registration
             services.AddTransient<MainMenu>();
+            services.AddTransient<Stage1>();
+            #endregion
+            #region Managers Registration
+            services.AddSingleton<PlayerManager>();
+            #endregion
         }
         protected override void AfterInitialize()
         {

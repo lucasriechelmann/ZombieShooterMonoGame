@@ -15,8 +15,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="State\" />
-    <Folder Include="Systems\" />
   </ItemGroup>
 </Project>

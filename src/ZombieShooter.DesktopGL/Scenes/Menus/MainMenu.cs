@@ -2,12 +2,15 @@
 using Gum.Forms.Controls;
 using Gum.Wireframe;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
+using MonoGame.Extended.Screens.Transitions;
 using MonoGameGum;
 using MonoGameGum.GueDeriving;
 using System;
 using System.IO;
 using ZombieShooter.Core.Scene;
+using ZombieShooter.DesktopGL.Scenes.Playing;
 
 namespace ZombieShooter.DesktopGL.Scenes.Menus;
 
@@ -36,11 +39,8 @@ public class MainMenu : SceneUIBase
         _stackPanel.AddChild(exitBtn);
     }
 
-    private void StartButton_Click(object sender, EventArgs e)
-    {
-
-        Console.WriteLine(nameof(StartButton_Click));
-    }
+    private void StartButton_Click(object sender, EventArgs e) =>
+        _game.LoadScreen<Stage1>(new FadeTransition(_game.GraphicsDevice, Color.Black));
     void ExitButton_Click(object sender, EventArgs e) => _game.Exit();
     Label CreateLabel(string text)
     {
