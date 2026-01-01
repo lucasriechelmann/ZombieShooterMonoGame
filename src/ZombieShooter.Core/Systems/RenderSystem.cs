@@ -19,9 +19,11 @@ public class RenderSystem : EntityDrawSystem
     SpriteBatch _spriteBatch;
     ComponentMapper<Transform2> _transform2Mapper;
     ComponentMapper<SpriteComponent> _spriteComponentMapper;
+    IGame _game;
     public RenderSystem(IGame game) : base(Aspect.All(typeof(SpriteComponent), typeof(Transform2)))
     {
         _spriteBatch = new(game.GraphicsDevice);
+        _game = game;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -30,7 +32,7 @@ public class RenderSystem : EntityDrawSystem
     }
     public override void Draw(GameTime gameTime)
     {
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(transformMatrix: _game.Camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
 
         foreach(int entityId in ActiveEntities)
         {

@@ -6,7 +6,7 @@ namespace ZombieShooter.Core.Scene;
 
 public abstract class SceneECSBase : SceneBase
 {
-    World _world;
+    World _world;    
     protected SceneECSBase(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         

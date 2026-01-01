@@ -3,15 +3,17 @@ using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Input;
 using ZombieShooter.Core.Components;
+using ZombieShooter.Core.Contracts;
 
 namespace ZombieShooter.Core.Systems;
 
 public class PlayerInputSystem : EntityProcessingSystem
 {
     ComponentMapper<MovementComponent> _movementMapper;
-    public PlayerInputSystem() : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent)))
+    IGame _game;
+    public PlayerInputSystem(IGame game) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent)))
     {
-        
+        _game = game;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -41,6 +43,6 @@ public class PlayerInputSystem : EntityProcessingSystem
             movement.SetMoveDirectionX(1);
 
         movement.NormalizeMoveDirection();
-        movement.Direction = MouseExtended.GetState().Position.ToVector2();
+        movement.Direction = _game.Camera.ScreenToWorld(MouseExtended.GetState().Position.ToVector2());
     }
 }

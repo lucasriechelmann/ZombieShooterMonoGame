@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Screens;
 using MonoGame.Extended.Screens.Transitions;
 using System;
@@ -14,6 +15,7 @@ public interface IGame
     IServiceProvider ServiceProvider { get; }
     GameECSBase Game { get; }
     ScreenManager ScreenManager { get; }
+    OrthographicCamera Camera { get; }
     int ScreenWidth { get; }
     int ScreenHeight { get; }
     void SetScreenSize(int width, int height);

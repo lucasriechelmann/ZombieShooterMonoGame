@@ -4,10 +4,6 @@ using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZombieShooter.Core.Components;
 using ZombieShooter.Core.Managers;
 using ZombieShooter.Core.Scene;
@@ -31,8 +27,9 @@ public class Stage1 : SceneECSBase
     protected override World CreateWorld()
     {
         World world = new WorldBuilder()
-            .AddSystem(new PlayerInputSystem())
+            .AddSystem(new PlayerInputSystem(_game))
             .AddSystem(new MovementSystem())
+            .AddSystem(new CameraFollowSystem(_game))
             .AddSystem(new RenderSystem(_game))
             .Build();
 

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens;
 using MonoGame.Extended.Screens.Transitions;
+using MonoGame.Extended.ViewportAdapters;
 using System;
 using ZombieShooter.Core.Contracts;
 using ZombieShooter.Core.Scene;
@@ -16,10 +18,13 @@ public abstract class GameECSBase : Game, IGame
     protected Color _clearColor = Color.CornflowerBlue;
     protected IServiceProvider _serviceProvider;
     protected ScreenManager _screenManager;
+    protected OrthographicCamera _camera;
+    protected float _cameraZoom = 1f;   
     public GraphicsDeviceManager GraphicsDeviceManager => _graphics;
     public IServiceProvider ServiceProvider => _serviceProvider;
     public ScreenManager ScreenManager => _screenManager;
     public GameECSBase Game => this;
+    public OrthographicCamera Camera => _camera;
     public int ScreenWidth { get; private set; }
     public int ScreenHeight { get; private set; }
     public GameECSBase(int width = 1280, int heigth = 720)
@@ -29,6 +34,12 @@ public abstract class GameECSBase : Game, IGame
 
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+    }
+    protected void CreateCamera()
+    {
+        BoxingViewportAdapter viewportAdapter = new(Window, GraphicsDevice, ScreenWidth, ScreenHeight);
+        _camera = new(viewportAdapter);
+        _camera.Zoom = _cameraZoom;
     }
     protected override void Initialize()
     {
@@ -40,6 +51,7 @@ public abstract class GameECSBase : Game, IGame
         services.AddSingleton(Services.GetRequiredService<IGraphicsDeviceService>());
         services.AddSingleton(GraphicsDeviceManager);
         OnInitialize(services);
+        CreateCamera();
         _serviceProvider = services.BuildServiceProvider();
         AfterInitialize();
         base.Initialize();
