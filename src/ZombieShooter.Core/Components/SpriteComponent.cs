@@ -10,7 +10,7 @@ namespace ZombieShooter.Core.Components;
 public class SpriteComponent
 {
     public Sprite Sprite { get; }
-    public SpriteComponent(Sprite sprite, float depth = 0f)
+    public SpriteComponent(Sprite sprite, float depth = 0.5f)
     {
         Sprite = sprite;
         Sprite.Depth = depth;

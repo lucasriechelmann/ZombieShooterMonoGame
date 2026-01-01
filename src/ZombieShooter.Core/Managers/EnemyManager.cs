@@ -1,4 +1,5 @@
 ﻿using MonoGame.Extended.Collections;
+using MonoGame.Extended.ECS;
 using System;
 using ZombieShooter.Core.Components;
 
@@ -6,14 +7,27 @@ namespace ZombieShooter.Core.Managers;
 
 public class EnemyManager
 {
-    record Enemy(int entityId, EnemyComponent EnemyComponent);
-    public Func<EnemyComponent> OnCreateEnemy;
-    public Action<EnemyComponent> OnResetEnemy;
-    Pool<EnemyComponent> _enemies;
+    public Func<Entity> OnCreateEnemy;
+    public Action<Entity> OnResetEntity;
+    Pool<Entity> _enemies;
     public EnemyManager()
     {
-        _enemies = new(CreateEnemy, ResetEnemy);
+        _isSpawning = true;
+        _enemies = new(CreateEnemy, ResetEntity);
     }
-    EnemyComponent CreateEnemy() => OnCreateEnemy?.Invoke();
-    void ResetEnemy(EnemyComponent enemyComponent) => OnResetEnemy?.Invoke(enemyComponent);
+    bool _isSpawning;
+    public void Spawn()
+    {
+        if (!_isSpawning)
+            return;
+
+        _isSpawning = false;
+
+        for(int i = 0; i < 5; i++)
+        {
+            _enemies.Obtain();
+        }
+    }
+    Entity CreateEnemy() => OnCreateEnemy?.Invoke();
+    void ResetEntity(Entity entity) => OnResetEntity?.Invoke(entity);
 }

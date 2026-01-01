@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Input;
@@ -10,14 +11,16 @@ namespace ZombieShooter.Core.Systems;
 public class PlayerInputSystem : EntityProcessingSystem
 {
     ComponentMapper<MovementComponent> _movementMapper;
+    ComponentMapper<Transform2> _transformMapper;
     IGame _game;
-    public PlayerInputSystem(IGame game) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent)))
+    public PlayerInputSystem(IGame game) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent), typeof(Transform2)))
     {
         _game = game;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
         _movementMapper = mapperService.GetMapper<MovementComponent>();
+        _transformMapper = mapperService.GetMapper<Transform2>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -43,6 +46,9 @@ public class PlayerInputSystem : EntityProcessingSystem
             movement.SetMoveDirectionX(1);
 
         movement.NormalizeMoveDirection();
-        movement.Direction = _game.Camera.ScreenToWorld(MouseExtended.GetState().Position.ToVector2());
+
+        Transform2 transform = _transformMapper.Get(entityId);
+
+        movement.Direction =  _game.Camera.ScreenToWorld(MouseExtended.GetState().Position.ToVector2()) - transform.Position;
     }
 }

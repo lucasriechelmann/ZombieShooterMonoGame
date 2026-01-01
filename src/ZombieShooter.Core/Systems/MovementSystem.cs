@@ -29,7 +29,7 @@ public class MovementSystem : EntityUpdateSystem
             var transform = _transformMapper.Get(entity);
 
             transform.Position += movement.MoveDirection * movement.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            transform.Rotation = MathF.Atan2(movement.Direction.Y - transform.Position.Y, movement.Direction.X - transform.Position.X);
+            transform.Rotation = MathF.Atan2(movement.Direction.Y, movement.Direction.X);
         }
     
     }

@@ -15,10 +15,12 @@ public class Stage1 : SceneECSBase
 {
     Texture2DAtlas _textureAtlas;
     PlayerManager _playerManager;
+    EnemyManager _enemyManager;
     public Stage1(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         AddContentToLoad<Texture2D>("spritesheets/Sprites");
         _playerManager = serviceProvider.GetRequiredService<PlayerManager>();
+        _enemyManager = serviceProvider.GetRequiredService<EnemyManager>();
     }
     protected override void OnInitialize()
     {
@@ -28,11 +30,13 @@ public class Stage1 : SceneECSBase
     {
         World world = new WorldBuilder()
             .AddSystem(new PlayerInputSystem(_game))
+            .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
             .AddSystem(new MovementSystem())
             .AddSystem(new CameraFollowSystem(_game))
             .AddSystem(new RenderSystem(_game))
             .Build();
 
+        CreateTerrain(world);
 
         Transform2 playerTransform = new Transform2(
             _game.ScreenWidth / 2 - 16,
@@ -48,6 +52,23 @@ public class Stage1 : SceneECSBase
         entity.Attach(playerTransform);
 
         return world;
+    }
+    void CreateTerrain(World world)
+    {
+        int columns = (int)Math.Round(_game.ScreenWidth / 32 * 1.5f);
+        int rows = (int)Math.Round(_game.ScreenHeight / 32 * 1.5f);
+
+        Sprite terrainSprite = _textureAtlas.CreateSprite(4);
+
+        for (int row = 0; row < rows; row++)
+        {
+            for(int column = 0; column < columns; column++)
+            {
+                Entity terrain = world.CreateEntity();
+                terrain.Attach(new SpriteComponent(terrainSprite, 0));
+                terrain.Attach(new Transform2(column * 32, row * 32));
+            }
+        }
     }
     protected override void OnUnloadContent()
     {

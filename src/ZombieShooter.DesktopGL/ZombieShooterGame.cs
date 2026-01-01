@@ -19,6 +19,7 @@ namespace ZombieShooter.DesktopGL
             #endregion
             #region Managers Registration
             services.AddSingleton<PlayerManager>();
+            services.AddSingleton<EnemyManager>();
             #endregion
             _cameraZoom = 3f;
         }
