@@ -57,9 +57,10 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
     {
         Entity enemy = CreateEntity();
         enemy.Attach(new EnemyComponent());
-        enemy.Attach(new MovementComponent(50));
+        enemy.Attach(new MovementComponent(_rand.Next(50,65)));
         enemy.Attach(new Transform2(GetEnemyPosition()));
         enemy.Attach(new SpriteComponent(_enemySprite));
+        enemy.Attach(new CircleColliderComponent(7));
 
         return enemy;
     }

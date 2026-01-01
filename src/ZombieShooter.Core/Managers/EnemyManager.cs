@@ -23,7 +23,7 @@ public class EnemyManager
 
         _isSpawning = false;
 
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < 30; i++)
         {
             _enemies.Obtain();
         }

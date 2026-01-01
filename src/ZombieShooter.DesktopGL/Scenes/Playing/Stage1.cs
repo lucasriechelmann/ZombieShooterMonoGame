@@ -31,9 +31,11 @@ public class Stage1 : SceneECSBase
         World world = new WorldBuilder()
             .AddSystem(new PlayerInputSystem(_game))
             .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
+            .AddSystem(new CollisionSystem(_game))
             .AddSystem(new MovementSystem())
             .AddSystem(new CameraFollowSystem(_game))
             .AddSystem(new RenderSystem(_game))
+            //.AddSystem(new RenderDebugSystem(_game))
             .Build();
 
         CreateTerrain(world);
@@ -50,6 +52,7 @@ public class Stage1 : SceneECSBase
         entity.Attach(new MovementComponent());
         entity.Attach(new SpriteComponent(_textureAtlas.CreateSprite(0)));
         entity.Attach(playerTransform);
+        entity.Attach(new CircleColliderComponent(7));
 
         return world;
     }
