@@ -36,25 +36,25 @@ public class CollisionSystem : EntityUpdateSystem
 
     public override void Update(GameTime gameTime)
     {
-        int playerId = ActiveEntities.Where(e => _playerMapper.Has(e)).FirstOrDefault();
+        var activeEntitiesList = ActiveEntities.ToList();               
+        int playerId = activeEntitiesList.FirstOrDefault(e => _playerMapper.Has(e));
         Transform2 playerTransform = _transformMapper.Get(playerId);
         CircleColliderComponent playerCollider = _circleColliderMapper.Get(playerId);
 
         if (playerCollider is null || playerTransform is null)
             return;
 
-        List<int> enemyIds = ActiveEntities.Where(e => _enemyMapper.Has(e)).ToList();
+        List<int> enemyIds = activeEntitiesList.Where(e => _enemyMapper.Has(e)).ToList();
 
-        foreach (int enemyIdA in enemyIds)
+        for (int i = 0; i < enemyIds.Count; i++)
         {
+            int enemyIdA = enemyIds[i];
             Transform2 transformA = _transformMapper.Get(enemyIdA);
             CircleColliderComponent colliderA = _circleColliderMapper.Get(enemyIdA);
 
-            foreach (int enemyIdB in enemyIds)
+            for (int j = i + 1; j < enemyIds.Count; j++)
             {
-                if (enemyIdA == enemyIdB)
-                    continue;
-
+                int enemyIdB = enemyIds[j];
                 Transform2 transformB = _transformMapper.Get(enemyIdB);
                 CircleColliderComponent colliderB = _circleColliderMapper.Get(enemyIdB);
 
