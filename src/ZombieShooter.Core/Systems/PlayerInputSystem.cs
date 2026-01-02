@@ -5,6 +5,7 @@ using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Input;
 using ZombieShooter.Core.Components;
 using ZombieShooter.Core.Contracts;
+using ZombieShooter.Core.Managers;
 
 namespace ZombieShooter.Core.Systems;
 
@@ -13,9 +14,11 @@ public class PlayerInputSystem : EntityProcessingSystem
     ComponentMapper<MovementComponent> _movementMapper;
     ComponentMapper<Transform2> _transformMapper;
     IGame _game;
-    public PlayerInputSystem(IGame game) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent), typeof(Transform2)))
+    PlayerManager _playerManager;
+    public PlayerInputSystem(IGame game, PlayerManager playerManager) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent), typeof(Transform2)))
     {
         _game = game;
+        _playerManager = playerManager;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -25,9 +28,9 @@ public class PlayerInputSystem : EntityProcessingSystem
 
     public override void Process(GameTime gameTime, int entityId)
     {
+        _playerManager.ProcessImmunity(gameTime);
         KeyboardExtended.Update();
         MouseExtended.Update();
-
 
         KeyboardStateExtended currentKeyboardState = KeyboardExtended.GetState();
         MovementComponent movement = _movementMapper.Get(entityId);

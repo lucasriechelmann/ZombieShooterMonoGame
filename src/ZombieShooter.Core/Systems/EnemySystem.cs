@@ -4,10 +4,6 @@ using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZombieShooter.Core.Components;
 using ZombieShooter.Core.Contracts;
 using ZombieShooter.Core.Managers;
@@ -24,7 +20,7 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
     ComponentMapper<Transform2> _transformMapper;
     Random _rand;
     public EnemySystem(IGame game, Sprite enemySprite, PlayerManager playerManager, EnemyManager enemyManager) : 
-        base(Aspect.All(typeof(EnemyComponent), typeof(MovementComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
+        base(Aspect.All(typeof(EnemyComponent), typeof(MovementComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)).Exclude(typeof(DisabledComponent)))
     {
         _game = game;
         _enemySprite = enemySprite;
@@ -32,7 +28,7 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
         _enemyManager = enemyManager;
         _rand = new();
         _enemyManager.OnCreateEnemy = CreateEnemy;
-        _enemyManager.OnResetEntity = ResetEnemy;
+        _enemyManager.OnResetEnemy = ResetEnemy;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -105,6 +101,6 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
     {
         base.Dispose();
         _enemyManager.OnCreateEnemy = null;
-        _enemyManager.OnResetEntity = null;
+        _enemyManager.OnResetEnemy = null;
     }
 }

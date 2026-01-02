@@ -4,11 +4,6 @@ using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZombieShooter.Core.Components;
 using ZombieShooter.Core.Contracts;
 
@@ -20,7 +15,7 @@ public class RenderSystem : EntityDrawSystem
     ComponentMapper<Transform2> _transform2Mapper;
     ComponentMapper<SpriteComponent> _spriteComponentMapper;
     IGame _game;
-    public RenderSystem(IGame game) : base(Aspect.All(typeof(SpriteComponent), typeof(Transform2)))
+    public RenderSystem(IGame game) : base(Aspect.All(typeof(SpriteComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
     {
         _spriteBatch = new(game.GraphicsDevice);
         _game = game;

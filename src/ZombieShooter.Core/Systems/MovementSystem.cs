@@ -9,12 +9,12 @@ namespace ZombieShooter.Core.Systems;
 
 public class MovementSystem : EntityUpdateSystem
 {
-    public MovementSystem() : base(Aspect.All(typeof(MovementComponent), typeof(Transform2)))
+    ComponentMapper<MovementComponent> _movementMapper;
+    ComponentMapper<Transform2> _transformMapper;
+    public MovementSystem() : base(Aspect.All(typeof(MovementComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
     {
         
     }
-    ComponentMapper<MovementComponent> _movementMapper;
-    ComponentMapper<Transform2> _transformMapper;
     public override void Initialize(IComponentMapperService mapperService)
     {
         _movementMapper = mapperService.GetMapper<MovementComponent>();

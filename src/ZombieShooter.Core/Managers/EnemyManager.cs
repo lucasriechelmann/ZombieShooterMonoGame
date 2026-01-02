@@ -8,12 +8,14 @@ namespace ZombieShooter.Core.Managers;
 public class EnemyManager
 {
     public Func<Entity> OnCreateEnemy;
-    public Action<Entity> OnResetEntity;
+    public Action<Entity> OnResetEnemy;
     Pool<Entity> _enemies;
+    DisabledComponent _disabledComponent;
     public EnemyManager()
     {
         _isSpawning = true;
         _enemies = new(CreateEnemy, ResetEntity);
+        _disabledComponent = new();
     }
     bool _isSpawning;
     public void Spawn()
@@ -29,5 +31,10 @@ public class EnemyManager
         }
     }
     Entity CreateEnemy() => OnCreateEnemy?.Invoke();
-    void ResetEntity(Entity entity) => OnResetEntity?.Invoke(entity);
+    void ResetEntity(Entity entity) => OnResetEnemy?.Invoke(entity);
+    public void HitEnemy(Entity enemy)
+    {
+        _enemies.Free(enemy);
+        enemy.Attach(_disabledComponent);
+    }
 }

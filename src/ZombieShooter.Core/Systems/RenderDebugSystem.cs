@@ -14,7 +14,7 @@ public class RenderDebugSystem : EntityDrawSystem
     ComponentMapper<Transform2> _transform2Mapper;
     SpriteBatch _spriteBatch;
     IGame _game;
-    public RenderDebugSystem(IGame game) : base(Aspect.All(typeof(CircleColliderComponent), typeof(Transform2)))
+    public RenderDebugSystem(IGame game) : base(Aspect.All(typeof(CircleColliderComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
     {
         _spriteBatch = new(game.GraphicsDevice);
         _game = game;

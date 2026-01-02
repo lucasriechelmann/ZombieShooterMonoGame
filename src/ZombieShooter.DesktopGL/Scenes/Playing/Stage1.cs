@@ -29,11 +29,12 @@ public class Stage1 : SceneECSBase
     protected override World CreateWorld()
     {
         World world = new WorldBuilder()
-            .AddSystem(new PlayerInputSystem(_game))
+            .AddSystem(new PlayerInputSystem(_game, _playerManager))
             .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
-            .AddSystem(new CollisionSystem(_game))
             .AddSystem(new MovementSystem())
+            .AddSystem(new CollisionSystem(_game, _playerManager, _enemyManager))
             .AddSystem(new CameraFollowSystem(_game))
+            .AddSystem(new HUDSystem(_game, _playerManager, _textureAtlas.CreateSprite(5)))
             .AddSystem(new RenderSystem(_game))
             //.AddSystem(new RenderDebugSystem(_game))
             .Build();
