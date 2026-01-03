@@ -18,12 +18,10 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
     ComponentMapper<Transform2> _transformMapper;
     ComponentMapper<MovementComponent> _movementMapper;
     
-    // Flyweight: Shared immutable components (marker types that don't hold state)
-    readonly BulletComponent _sharedBulletComponent;
-    readonly SpriteComponent _sharedSpriteComponent;
-    readonly CircleColliderComponent _sharedColliderComponent;
-    readonly DisabledComponent _sharedDisabledComponent;
-    
+    // Store sprite reference for creating SpriteComponents
+    readonly Sprite _bulletSprite;
+    readonly float _bulletSpriteDepth = 0.4f;
+    readonly float _bulletColliderRadius = 0.2f;
     readonly Vector2 _offset;
     readonly float _bulletSpeed = 200f;
     
@@ -33,16 +31,10 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         _game = game;
         _bulletManager = bulletManager;
         _playerManager = playerManager;
-        
-        // Flyweight: Create shared instances for immutable marker components
-        _sharedBulletComponent = new BulletComponent();
-        _sharedSpriteComponent = new SpriteComponent(sprite, 0.4f);
-        _sharedColliderComponent = new CircleColliderComponent(0.2f);
-        _sharedDisabledComponent = new DisabledComponent();
+        _bulletSprite = sprite;
         
         _bulletManager.OnCreateBullet = CreateBullet;
         _bulletManager.OnResetBullet = ResetBullet;
-        _bulletManager.OnFreeBullet = FreeBullet;
         _offset = Vector2.Zero;
     }
     public override void Initialize(IComponentMapperService mapperService)
@@ -75,13 +67,12 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
     {
         Entity bullet = CreateEntity();
         
-        // Flyweight: Attach shared immutable components
-        bullet.Attach(_sharedBulletComponent);
-        bullet.Attach(_sharedSpriteComponent);
-        bullet.Attach(_sharedColliderComponent);
-        
-        // Extrinsic state: Only create new instances for components with mutable state
+        // Create individual component instances for each bullet
+        bullet.Attach(new BulletComponent());
+        bullet.Attach(new SpriteComponent(_bulletSprite, _bulletSpriteDepth));
+        bullet.Attach(new CircleColliderComponent(_bulletColliderRadius));
         bullet.Attach(new Transform2(_playerManager.Position + _offset));
+        
         MovementComponent movement = new(_bulletSpeed);
         movement.MoveDirection = _playerManager.Direction;
         movement.Direction = movement.MoveDirection;
@@ -102,16 +93,10 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         movement.Direction = movement.MoveDirection;
     }
     
-    void FreeBullet(Entity entity)
-    {
-        entity.Attach(_sharedDisabledComponent);
-    }
-    
     public new void Dispose()
     {
         base.Dispose();
         _bulletManager.OnCreateBullet = null;
         _bulletManager.OnResetBullet = null;
-        _bulletManager.OnFreeBullet = null;
     }
 }

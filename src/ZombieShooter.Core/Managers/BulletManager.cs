@@ -10,21 +10,22 @@ public class BulletManager
 {
     public Func<Entity> OnCreateBullet;
     public Action<Entity> OnResetBullet;
-    public Action<Entity> OnFreeBullet;
     Pool<Entity> _bullets;
+    DisabledComponent _disabledComponent;
     float _bulletSpawnInterval = 0.3f;
     float _bulletSpawnTimer = 0.0f;
     const int MAX_BULLETS = 200;
     public BulletManager()
     {
         _bullets = new(CreateBullet, ResetEntity, MAX_BULLETS);
+        _disabledComponent = new();
     }
     Entity CreateBullet() => OnCreateBullet?.Invoke();
     void ResetEntity(Entity entity) => OnResetBullet?.Invoke(entity);
     public void HitBullet(Entity bullet)
     {
         _bullets.Free(bullet);
-        OnFreeBullet?.Invoke(bullet);
+        bullet.Attach(_disabledComponent);
     }
     public void OutsiteWorld(Entity bullet) => HitBullet(bullet);
     public void ProcessShooting(GameTime gameTime)
@@ -42,7 +43,10 @@ public class BulletManager
         if (_bulletSpawnTimer > 0f)
             return;
 
-        _bullets.Obtain();
-        _bulletSpawnTimer = _bulletSpawnInterval;
+        Entity bullet = _bullets.Obtain();
+        if (bullet != null)
+        {
+            _bulletSpawnTimer = _bulletSpawnInterval;
+        }
     }
 }

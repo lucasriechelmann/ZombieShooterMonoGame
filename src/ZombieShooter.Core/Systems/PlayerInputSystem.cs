@@ -56,9 +56,12 @@ public class PlayerInputSystem : EntityProcessingSystem
         Transform2 transform = _transformMapper.Get(entityId);
 
         MouseStateExtended currentMouseState = MouseExtended.GetState();
-        movement.Direction =  _game.Camera.ScreenToWorld(currentMouseState.Position.ToVector2()) - transform.Position;
-
-        _playerManager.SetDirection(movement.Direction);
+        Vector2 mouseDirection = _game.Camera.ScreenToWorld(currentMouseState.Position.ToVector2()) - transform.Position;
+        if (mouseDirection != Vector2.Zero)
+            mouseDirection.Normalize();
+        
+        movement.Direction = mouseDirection;
+        _playerManager.SetDirection(mouseDirection);
 
         if (currentKeyboardState.IsKeyDown(Keys.Space))
             _bulletManager.Shoot();
