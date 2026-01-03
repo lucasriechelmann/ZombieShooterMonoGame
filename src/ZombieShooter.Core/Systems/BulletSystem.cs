@@ -20,7 +20,7 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
     
     // Store sprite reference for creating SpriteComponents
     readonly Sprite _bulletSprite;
-    readonly float _bulletSpriteDepth = 0.4f;
+    readonly float _bulletSpriteDepth = 0.3f;
     readonly float _bulletColliderRadius = 0.2f;
     readonly Vector2 _offset;
     readonly float _bulletSpeed = 200f;

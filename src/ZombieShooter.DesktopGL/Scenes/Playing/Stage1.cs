@@ -33,13 +33,13 @@ public class Stage1 : SceneECSBase
         World world = new WorldBuilder()
             .AddSystem(new PlayerInputSystem(_game, _playerManager, _bulletManager))
             .AddSystem(new BulletSystem(_game, _bulletManager, _playerManager, _textureAtlas.CreateSprite(2)))
-            //.AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
+            .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
             .AddSystem(new MovementSystem())
-            .AddSystem(new CollisionSystem(_game, _playerManager, _enemyManager))
+            .AddSystem(new CollisionSystem(_game, _playerManager, _enemyManager, _bulletManager))
             .AddSystem(new CameraFollowSystem(_game))
             .AddSystem(new HUDSystem(_game, _playerManager, _textureAtlas.CreateSprite(5)))
             .AddSystem(new RenderSystem(_game))
-            .AddSystem(new RenderDebugSystem(_game))
+            //.AddSystem(new RenderDebugSystem(_game))
             .Build();
 
         CreateTerrain(world);

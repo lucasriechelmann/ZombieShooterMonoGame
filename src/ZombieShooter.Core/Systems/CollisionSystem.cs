@@ -17,14 +17,18 @@ public class CollisionSystem : EntityUpdateSystem
     ComponentMapper<Transform2> _transformMapper;
     ComponentMapper<PlayerComponent> _playerMapper;
     ComponentMapper<EnemyComponent> _enemyMapper;
+    ComponentMapper<BulletComponent> _bulletMapper;
     PlayerManager _playerManager;
     EnemyManager _enemyManager;
+    BulletManager _bulletManager;
     IGame _game;
-    public CollisionSystem(IGame game, PlayerManager playerManager, EnemyManager enemyManager) : base(Aspect.All(typeof(CircleColliderComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
+    public CollisionSystem(IGame game, PlayerManager playerManager, EnemyManager enemyManager, BulletManager bulletManager) : 
+        base(Aspect.All(typeof(CircleColliderComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
     {
         _game = game;
         _playerManager = playerManager;
         _enemyManager = enemyManager;
+        _bulletManager = bulletManager;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -32,6 +36,7 @@ public class CollisionSystem : EntityUpdateSystem
         _transformMapper = mapperService.GetMapper<Transform2>();
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
         _enemyMapper = mapperService.GetMapper<EnemyComponent>();
+        _bulletMapper = mapperService.GetMapper<BulletComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -45,7 +50,9 @@ public class CollisionSystem : EntityUpdateSystem
             return;
 
         List<int> enemyIds = activeEntitiesList.Where(e => _enemyMapper.Has(e)).ToList();
+        List<int> bulletIds = activeEntitiesList.Where(e => _bulletMapper.Has(e)).ToList();
 
+        // Enemy-to-enemy collision (separation)
         for (int i = 0; i < enemyIds.Count; i++)
         {
             int enemyIdA = enemyIds[i];
@@ -78,12 +85,28 @@ public class CollisionSystem : EntityUpdateSystem
                 }
             }
 
+            // Enemy-to-player collision
             Vector2 playerDifference = transformA.Position - playerTransform.Position;
             float playerDistanceSq = playerDifference.LengthSquared();
             float playerCombinedRadius = colliderA.Collider.Radius + playerCollider.Collider.Radius;
             if (playerDistanceSq < playerCombinedRadius * playerCombinedRadius)
                 _playerManager.Hit(1);
 
+            foreach(int bulletId in bulletIds)
+            {
+                Transform2 bulletTransform = _transformMapper.Get(bulletId);
+                CircleColliderComponent bulletCollider = _circleColliderMapper.Get(bulletId);
+                Vector2 bulletDifference = transformA.Position - bulletTransform.Position;
+                float bulletDistanceSq = bulletDifference.LengthSquared();
+                float bulletCombinedRadius = colliderA.Collider.Radius + bulletCollider.Collider.Radius;
+                if (bulletDistanceSq < bulletCombinedRadius * bulletCombinedRadius)
+                {
+                    Entity enemy = GetEntity(enemyIdA);
+                    _enemyManager.HitEnemy(enemy);
+                    Entity bullet = GetEntity(bulletId);
+                    _bulletManager.HitBullet(bullet);
+                }
+            }
         }
     }
 }
