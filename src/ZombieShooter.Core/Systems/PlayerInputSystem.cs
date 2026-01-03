@@ -31,10 +31,6 @@ public class PlayerInputSystem : EntityProcessingSystem
 
     public override void Process(GameTime gameTime, int entityId)
     {
-        _playerManager.ProcessImmunity(gameTime);
-        KeyboardExtended.Update();
-        MouseExtended.Update();
-
         KeyboardStateExtended currentKeyboardState = KeyboardExtended.GetState();
         MovementComponent movement = _movementMapper.Get(entityId);
         movement.MoveDirection = Vector2.Zero;

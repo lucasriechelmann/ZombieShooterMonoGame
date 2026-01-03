@@ -45,8 +45,6 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
 
     public override void Update(GameTime gameTime)
     {
-        _bulletManager.ProcessShooting(gameTime);
-
         foreach (int entityId in ActiveEntities)
         {
             Transform2 transform = _transformMapper.Get(entityId);

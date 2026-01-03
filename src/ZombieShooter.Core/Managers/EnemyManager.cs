@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended.Collections;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.ECS;
 using System;
 using ZombieShooter.Core.Components;
@@ -19,7 +20,10 @@ public class EnemyManager
         _enemies = new(CreateEnemy, ResetEntity);
         _disabledComponent = new();
     }
-    
+    public void ProcessSpawning(GameTime gameTime)
+    {
+        // Placeholder for future spawning logic
+    }
     public void Spawn()
     {
         if (!_isSpawning)
@@ -27,7 +31,7 @@ public class EnemyManager
 
         _isSpawning = false;
 
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < 10; i++)
         {
             _enemies.Obtain();
         }

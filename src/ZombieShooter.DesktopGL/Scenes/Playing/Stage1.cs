@@ -31,6 +31,7 @@ public class Stage1 : SceneECSBase
     protected override World CreateWorld()
     {
         World world = new WorldBuilder()
+            .AddSystem(new UpdateSystem(_playerManager, _enemyManager, _bulletManager))
             .AddSystem(new PlayerInputSystem(_game, _playerManager, _bulletManager))
             .AddSystem(new BulletSystem(_game, _bulletManager, _playerManager, _textureAtlas.CreateSprite(2)))
             .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
