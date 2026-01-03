@@ -16,11 +16,13 @@ public class Stage1 : SceneECSBase
     Texture2DAtlas _textureAtlas;
     PlayerManager _playerManager;
     EnemyManager _enemyManager;
+    BulletManager _bulletManager;
     public Stage1(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         AddContentToLoad<Texture2D>("spritesheets/Sprites");
         _playerManager = serviceProvider.GetRequiredService<PlayerManager>();
         _enemyManager = serviceProvider.GetRequiredService<EnemyManager>();
+        _bulletManager = serviceProvider.GetRequiredService<BulletManager>();
     }
     protected override void OnInitialize()
     {
@@ -29,14 +31,15 @@ public class Stage1 : SceneECSBase
     protected override World CreateWorld()
     {
         World world = new WorldBuilder()
-            .AddSystem(new PlayerInputSystem(_game, _playerManager))
-            .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
+            .AddSystem(new PlayerInputSystem(_game, _playerManager, _bulletManager))
+            .AddSystem(new BulletSystem(_game, _bulletManager, _playerManager, _textureAtlas.CreateSprite(2)))
+            //.AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
             .AddSystem(new MovementSystem())
             .AddSystem(new CollisionSystem(_game, _playerManager, _enemyManager))
             .AddSystem(new CameraFollowSystem(_game))
             .AddSystem(new HUDSystem(_game, _playerManager, _textureAtlas.CreateSprite(5)))
             .AddSystem(new RenderSystem(_game))
-            //.AddSystem(new RenderDebugSystem(_game))
+            .AddSystem(new RenderDebugSystem(_game))
             .Build();
 
         CreateTerrain(world);

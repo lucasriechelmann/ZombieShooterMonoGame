@@ -13,22 +13,33 @@ namespace ZombieShooter.Core.Systems;
 public class EnemySystem : EntityUpdateSystem, IDisposable
 {
     IGame _game;
-    Sprite _enemySprite;
     PlayerManager _playerManager;
     EnemyManager _enemyManager;
     ComponentMapper<MovementComponent> _movementMapper;
     ComponentMapper<Transform2> _transformMapper;
     Random _rand;
+    
+    // Flyweight: Shared immutable components
+    readonly EnemyComponent _sharedEnemyComponent;
+    readonly SpriteComponent _sharedSpriteComponent;
+    readonly DisabledComponent _sharedDisabledComponent;
+    
     public EnemySystem(IGame game, Sprite enemySprite, PlayerManager playerManager, EnemyManager enemyManager) : 
         base(Aspect.All(typeof(EnemyComponent), typeof(MovementComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)).Exclude(typeof(DisabledComponent)))
     {
         _game = game;
-        _enemySprite = enemySprite;
         _playerManager = playerManager;
         _enemyManager = enemyManager;
         _rand = new();
+        
+        // Flyweight: Create shared instances
+        _sharedEnemyComponent = new EnemyComponent();
+        _sharedSpriteComponent = new SpriteComponent(enemySprite);
+        _sharedDisabledComponent = new DisabledComponent();
+        
         _enemyManager.OnCreateEnemy = CreateEnemy;
         _enemyManager.OnResetEnemy = ResetEnemy;
+        _enemyManager.OnHitEnemy = HitEnemy;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -52,19 +63,30 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
     Entity CreateEnemy()
     {
         Entity enemy = CreateEntity();
-        enemy.Attach(new EnemyComponent());
+        
+        // Flyweight: Attach shared immutable components
+        enemy.Attach(_sharedEnemyComponent);
+        enemy.Attach(_sharedSpriteComponent);
+        
+        // Extrinsic state: Create unique instances for mutable data
         enemy.Attach(new MovementComponent(_rand.Next(50,65)));
         enemy.Attach(new Transform2(GetEnemyPosition()));
-        enemy.Attach(new SpriteComponent(_enemySprite));
         enemy.Attach(new CircleColliderComponent(7));
 
         return enemy;
     }
+    
     void ResetEnemy(Entity entity)
     {
         entity.Detach<DisabledComponent>();
         _transformMapper.Get(entity.Id).Position = GetEnemyPosition();
     }
+    
+    void HitEnemy(Entity entity)
+    {
+        entity.Attach(_sharedDisabledComponent);
+    }
+    
     Vector2 GetEnemyPosition()
     {
         int margin = 32;
@@ -102,5 +124,6 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
         base.Dispose();
         _enemyManager.OnCreateEnemy = null;
         _enemyManager.OnResetEnemy = null;
+        _enemyManager.OnHitEnemy = null;
     }
 }

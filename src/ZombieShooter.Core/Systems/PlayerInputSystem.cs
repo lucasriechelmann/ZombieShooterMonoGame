@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
@@ -15,10 +16,12 @@ public class PlayerInputSystem : EntityProcessingSystem
     ComponentMapper<Transform2> _transformMapper;
     IGame _game;
     PlayerManager _playerManager;
-    public PlayerInputSystem(IGame game, PlayerManager playerManager) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent), typeof(Transform2)))
+    BulletManager _bulletManager;
+    public PlayerInputSystem(IGame game, PlayerManager playerManager, BulletManager bulletManager) : base(Aspect.All(typeof(PlayerComponent), typeof(MovementComponent), typeof(Transform2)))
     {
         _game = game;
         _playerManager = playerManager;
+        _bulletManager = bulletManager;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -36,22 +39,28 @@ public class PlayerInputSystem : EntityProcessingSystem
         MovementComponent movement = _movementMapper.Get(entityId);
         movement.MoveDirection = Vector2.Zero;
 
-        if(currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W))
+        if (currentKeyboardState.IsKeyDown(Keys.W))
             movement.SetMoveDirectionY(-1);
 
-        if (currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
+        if (currentKeyboardState.IsKeyDown(Keys.S))
             movement.SetMoveDirectionY(1);
 
-        if (currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A))
+        if (currentKeyboardState.IsKeyDown(Keys.A))
             movement.SetMoveDirectionX(-1);
 
-        if (currentKeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
+        if (currentKeyboardState.IsKeyDown(Keys.D))
             movement.SetMoveDirectionX(1);
 
         movement.NormalizeMoveDirection();
 
         Transform2 transform = _transformMapper.Get(entityId);
 
-        movement.Direction =  _game.Camera.ScreenToWorld(MouseExtended.GetState().Position.ToVector2()) - transform.Position;
+        MouseStateExtended currentMouseState = MouseExtended.GetState();
+        movement.Direction =  _game.Camera.ScreenToWorld(currentMouseState.Position.ToVector2()) - transform.Position;
+
+        _playerManager.SetDirection(movement.Direction);
+
+        if (currentKeyboardState.IsKeyDown(Keys.Space))
+            _bulletManager.Shoot();
     }
 }

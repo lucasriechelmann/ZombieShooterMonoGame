@@ -9,15 +9,16 @@ public class EnemyManager
 {
     public Func<Entity> OnCreateEnemy;
     public Action<Entity> OnResetEnemy;
+    public Action<Entity> OnHitEnemy;
     Pool<Entity> _enemies;
-    DisabledComponent _disabledComponent;
+    bool _isSpawning;
+    
     public EnemyManager()
     {
         _isSpawning = true;
         _enemies = new(CreateEnemy, ResetEntity);
-        _disabledComponent = new();
     }
-    bool _isSpawning;
+    
     public void Spawn()
     {
         if (!_isSpawning)
@@ -30,11 +31,13 @@ public class EnemyManager
             _enemies.Obtain();
         }
     }
+    
     Entity CreateEnemy() => OnCreateEnemy?.Invoke();
     void ResetEntity(Entity entity) => OnResetEnemy?.Invoke(entity);
+    
     public void HitEnemy(Entity enemy)
     {
         _enemies.Free(enemy);
-        enemy.Attach(_disabledComponent);
+        OnHitEnemy?.Invoke(enemy);
     }
 }

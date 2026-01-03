@@ -12,15 +12,15 @@ public class PlayerManager
     int _maxHealth = 10;
     public int Health { get; private set; }
     Transform2 _playerTransform;
+    Vector2 _direction;
     public PlayerManager()
     {
         Health = _maxHealth;
     }
-    public void SetPlayerTransform(Transform2 transform)
-    {
-        _playerTransform = transform;
-    }
+    public void SetPlayerTransform(Transform2 transform) => _playerTransform = transform;
+    public void SetDirection(Vector2 direction) => _direction = direction;
     public Vector2 Position => _playerTransform?.Position ?? Vector2.Zero;
+    public Vector2 Direction => _direction;
     public void ProcessImmunity(GameTime gameTime)
     {
         if(_immunityTimer < 0f)
