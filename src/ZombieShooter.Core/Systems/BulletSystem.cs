@@ -4,6 +4,7 @@ using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Graphics;
 using System;
+using System.Diagnostics;
 using ZombieShooter.Core.Components;
 using ZombieShooter.Core.Contracts;
 using ZombieShooter.Core.Managers;
@@ -22,7 +23,7 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
     readonly Sprite _bulletSprite;
     readonly float _bulletSpriteDepth = 0.3f;
     readonly float _bulletColliderRadius = 0.2f;
-    readonly Vector2 _offset;
+    
     readonly float _bulletSpeed = 200f;
     
     public BulletSystem(IGame game, BulletManager bulletManager, PlayerManager playerManager, Sprite sprite) : 
@@ -35,7 +36,6 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         
         _bulletManager.OnCreateBullet = CreateBullet;
         _bulletManager.OnResetBullet = ResetBullet;
-        _offset = Vector2.Zero;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -61,7 +61,7 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
             }
         }
     }
-    Entity CreateBullet()
+    Entity CreateBullet(Vector2 offset)
     {
         Entity bullet = CreateEntity();
         
@@ -69,7 +69,7 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         bullet.Attach(new BulletComponent());
         bullet.Attach(new SpriteComponent(_bulletSprite, _bulletSpriteDepth));
         bullet.Attach(new CircleColliderComponent(_bulletColliderRadius));
-        bullet.Attach(new Transform2(_playerManager.Position + _offset));
+        bullet.Attach(new Transform2(_playerManager.Position + offset));
         
         MovementComponent movement = new(_bulletSpeed);
         movement.MoveDirection = _playerManager.Direction;
@@ -82,13 +82,7 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
     
     void ResetBullet(Entity entity)
     {
-        entity.Detach<DisabledComponent>();
-        Transform2 transform = entity.Get<Transform2>();
-        transform.Position = _playerManager.Position + _offset;
-        MovementComponent movement = entity.Get<MovementComponent>();
-        movement.MoveDirection = _playerManager.Direction;
-        movement.NormalizeMoveDirection();
-        movement.Direction = movement.MoveDirection;
+        entity.Attach(new DisabledComponent());
     }
     
     public new void Dispose()

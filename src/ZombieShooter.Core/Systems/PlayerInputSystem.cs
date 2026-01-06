@@ -4,6 +4,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Input;
+using System.Diagnostics;
 using ZombieShooter.Core.Components;
 using ZombieShooter.Core.Contracts;
 using ZombieShooter.Core.Managers;
@@ -60,6 +61,8 @@ public class PlayerInputSystem : EntityProcessingSystem
         _playerManager.SetDirection(mouseDirection);
 
         if (currentKeyboardState.IsKeyDown(Keys.Space))
+        {
             _bulletManager.Shoot();
+        }
     }
 }
