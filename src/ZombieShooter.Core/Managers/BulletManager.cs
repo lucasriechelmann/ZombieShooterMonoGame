@@ -33,19 +33,24 @@ public class BulletManager
     public void OutsiteWorld(Entity bullet) => HitBullet(bullet);
     public void ProcessShooting(GameTime gameTime)
     {
-        //Debug.WriteLine($"ProcessShooting {_bulletSpawnTimer} {gameTime.ElapsedGameTime.TotalSeconds}");
-        if (_bulletSpawnTimer > 0f)
-            _bulletSpawnTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _bulletSpawnTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if(_bulletSpawnTimer < 0f)
+            _bulletSpawnTimer = 0f;
     }
+    int bulletCount = 0;
     public void Shoot()
     {
         if (_bulletSpawnTimer > 0f)
             return;
 
+        Debug.WriteLine("Shoot Bullet");
         Entity bullet = _bullets.Obtain();
 
         if (bullet is null)
             return;
+
+        bulletCount++;
+        Debug.WriteLine($"Bullet got. {bulletCount}");
 
         Transform2 transform = bullet.Get<Transform2>();
         transform.Position = _playerManager.Position + _offset;
@@ -53,6 +58,7 @@ public class BulletManager
         movement.MoveDirection = _playerManager.Direction;
         movement.NormalizeMoveDirection();
         movement.Direction = movement.MoveDirection;
+        bullet.Detach<DisabledComponent>();
         _bulletSpawnTimer = _bulletSpawnInterval;
     }
 }
