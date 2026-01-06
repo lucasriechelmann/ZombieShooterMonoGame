@@ -22,7 +22,8 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
     // Store sprite reference for creating SpriteComponents
     readonly Sprite _bulletSprite;
     readonly float _bulletSpriteDepth = 0.3f;
-    readonly float _bulletColliderRadius = 0.2f;
+    readonly float _bulletColliderRadius = 0.4f;
+    readonly float _bulletScale = 2f;
     
     readonly float _bulletSpeed = 200f;
     
@@ -69,7 +70,9 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         bullet.Attach(new BulletComponent());
         bullet.Attach(new SpriteComponent(_bulletSprite, _bulletSpriteDepth));
         bullet.Attach(new CircleColliderComponent(_bulletColliderRadius));
-        bullet.Attach(new Transform2(_playerManager.Position + offset));
+        Transform2 transform = new Transform2(_playerManager.Position + offset);
+        transform.Scale = new(_bulletScale);
+        bullet.Attach(transform);
         
         MovementComponent movement = new(_bulletSpeed);
         movement.MoveDirection = _playerManager.Direction;
