@@ -36,7 +36,6 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         _bulletSprite = sprite;
         
         _bulletManager.OnCreateBullet = CreateBullet;
-        _bulletManager.OnResetBullet = ResetBullet;
     }
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -62,7 +61,7 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
             }
         }
     }
-    Entity CreateBullet(Vector2 offset)
+    Entity CreateBullet()
     {
         Entity bullet = CreateEntity();
         
@@ -70,28 +69,16 @@ public class BulletSystem : EntityUpdateSystem, IDisposable
         bullet.Attach(new BulletComponent());
         bullet.Attach(new SpriteComponent(_bulletSprite, _bulletSpriteDepth));
         bullet.Attach(new CircleColliderComponent(_bulletColliderRadius));
-        Transform2 transform = new Transform2(_playerManager.Position + offset);
+        Transform2 transform = new Transform2();
         transform.Scale = new(_bulletScale);
-        bullet.Attach(transform);
-        
-        MovementComponent movement = new(_bulletSpeed);
-        movement.MoveDirection = _playerManager.Direction;
-        movement.Direction = movement.MoveDirection;
-        movement.NormalizeMoveDirection();
-        bullet.Attach(movement);
+        bullet.Attach(transform);        
+        bullet.Attach(new MovementComponent(_bulletSpeed));
 
         return bullet;
-    }
-    
-    void ResetBullet(Entity entity)
-    {
-        entity.Attach(new DisabledComponent());
-    }
-    
+    }    
     public new void Dispose()
     {
         base.Dispose();
         _bulletManager.OnCreateBullet = null;
-        _bulletManager.OnResetBullet = null;
     }
 }

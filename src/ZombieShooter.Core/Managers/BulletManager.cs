@@ -10,22 +10,24 @@ namespace ZombieShooter.Core.Managers;
 
 public class BulletManager
 {
-    public Func<Vector2, Entity> OnCreateBullet;
-    public Action<Entity> OnResetBullet;
+    public Func<Entity> OnCreateBullet;
     Pool<Entity> _bullets;
     float _bulletSpawnInterval = 0.3f;
     float _bulletSpawnTimer = 0.0f;
     const int MAX_BULLETS = 200;
-    readonly Vector2 _offset;
     PlayerManager _playerManager;
+    DisabledComponent _disabledComponent;
     public BulletManager(PlayerManager playerManager)
     {
         _bullets = new(CreateBullet, ResetEntity, MAX_BULLETS);
         _playerManager = playerManager;
-        _offset = new(5,0);
+        _disabledComponent = new();
     }
-    Entity CreateBullet() => OnCreateBullet?.Invoke(_offset);
-    void ResetEntity(Entity entity) => OnResetBullet?.Invoke(entity);
+    Entity CreateBullet() => OnCreateBullet?.Invoke();
+    void ResetEntity(Entity entity)
+    {
+        entity.Attach(_disabledComponent);
+    }
     public void HitBullet(Entity bullet)
     {
         _bullets.Free(bullet);

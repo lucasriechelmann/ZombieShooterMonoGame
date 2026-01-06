@@ -27,7 +27,7 @@ public class RenderSystem : EntityDrawSystem
     }
     public override void Draw(GameTime gameTime)
     {
-        _spriteBatch.Begin(transformMatrix: _game.Camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
+        _spriteBatch.Begin(transformMatrix: _game.Camera.GetViewMatrix(), samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
         foreach(int entityId in ActiveEntities)
         {
