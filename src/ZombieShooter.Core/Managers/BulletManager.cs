@@ -22,7 +22,7 @@ public class BulletManager
     {
         _bullets = new(CreateBullet, ResetEntity, MAX_BULLETS);
         _playerManager = playerManager;
-        _offset = Vector2.Zero;
+        _offset = new(5,0);
     }
     Entity CreateBullet() => OnCreateBullet?.Invoke(_offset);
     void ResetEntity(Entity entity) => OnResetBullet?.Invoke(entity);
@@ -37,28 +37,43 @@ public class BulletManager
         if(_bulletSpawnTimer < 0f)
             _bulletSpawnTimer = 0f;
     }
-    int bulletCount = 0;
     public void Shoot()
     {
         if (_bulletSpawnTimer > 0f)
             return;
 
-        Debug.WriteLine("Shoot Bullet");
         Entity bullet = _bullets.Obtain();
 
         if (bullet is null)
             return;
 
-        bulletCount++;
-        Debug.WriteLine($"Bullet got. {bulletCount}");
-
         Transform2 transform = bullet.Get<Transform2>();
-        transform.Position = _playerManager.Position + _offset;
+        transform.Position = GetMuzzlePosition();
         MovementComponent movement = bullet.Get<MovementComponent>();
         movement.MoveDirection = _playerManager.Direction;
         movement.NormalizeMoveDirection();
         movement.Direction = movement.MoveDirection;
         bullet.Detach<DisabledComponent>();
         _bulletSpawnTimer = _bulletSpawnInterval;
+    }    
+    public Vector2 GetMuzzlePosition()
+    {
+        // How far in front of the center the gun is
+        float forwardOffset = 10f;
+        // How far to the right of the center the gun is (use negative for left hand)
+        float sideOffset = 8f;
+
+        float rotation = MathF.Atan2(_playerManager.Direction.Y, _playerManager.Direction.X);
+
+        // playerRotation is in Radians
+        float cos = (float)Math.Cos(rotation);
+        float sin = (float)Math.Sin(rotation);
+
+        // Calculate the rotated offset
+        float rotatedX = (forwardOffset * cos) - (sideOffset * sin);
+        float rotatedY = (forwardOffset * sin) + (sideOffset * cos);
+
+        // Add the offset to the player's current center position
+        return new Vector2(_playerManager.Position.X + rotatedX, _playerManager.Position.Y + rotatedY);
     }
 }
