@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
@@ -19,8 +20,8 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
     ComponentMapper<MovementComponent> _movementMapper;
     ComponentMapper<Transform2> _transformMapper;
     Random _rand;
-    
-    public EnemySystem(IGame game, Sprite enemySprite, PlayerManager playerManager, EnemyManager enemyManager) : 
+    SoundEffect _stepSFX;
+    public EnemySystem(IGame game, Sprite enemySprite, PlayerManager playerManager, EnemyManager enemyManager, SoundEffect stepSFX) : 
         base(Aspect.All(typeof(EnemyComponent), typeof(MovementComponent), typeof(Transform2)).Exclude(typeof(DisabledComponent)))
     {
         _game = game;
@@ -28,6 +29,7 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
         _playerManager = playerManager;
         _enemyManager = enemyManager;
         _rand = new();
+        _stepSFX = stepSFX;
         
         _enemyManager.OnCreateEnemy = CreateEnemy;
         _enemyManager.OnResetEnemy = ResetEnemy;
@@ -62,6 +64,7 @@ public class EnemySystem : EntityUpdateSystem, IDisposable
         enemy.Attach(new Transform2(GetEnemyPosition()));
         enemy.Attach(new SpriteComponent(_enemySprite));
         enemy.Attach(new CircleColliderComponent(7));
+        enemy.Attach(new FootstepComponent(_stepSFX, 45));
 
         return enemy;
     }

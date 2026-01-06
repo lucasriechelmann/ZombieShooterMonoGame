@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoGame.Extended;
 using System;
 
@@ -15,7 +16,7 @@ public class PlayerManager
     Vector2 _direction;
     public PlayerManager()
     {
-        Health = _maxHealth;
+        Health = _maxHealth;        
     }
     public void SetPlayerTransform(Transform2 transform) => _playerTransform = transform;
     public void SetDirection(Vector2 direction) => _direction = direction;

@@ -30,7 +30,6 @@ public class MovementSystem : EntityUpdateSystem
 
             transform.Position += movement.MoveDirection * movement.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             transform.Rotation = MathF.Atan2(movement.Direction.Y, movement.Direction.X);
-        }
-    
+        }    
     }
 }

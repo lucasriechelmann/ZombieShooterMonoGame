@@ -35,6 +35,18 @@
 #begin ../Assets/Source/fonts/arial/Arial.fnt
 /copy:../Assets/Source/fonts/arial/Arial.fnt;fonts/arial/Arial.fnt
 
+#begin ../Assets/Source/sfx/footsteps.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../Assets/Source/sfx/footsteps.wav;sfx/footsteps.wav
+
+#begin ../Assets/Source/sfx/stepdirt_1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../Assets/Source/sfx/stepdirt_1.wav;sfx/stepdirt_1.wav
+
 #begin ../Assets/Source/spritesheets/Sprites.png
 /importer:TextureImporter
 /processor:TextureProcessor

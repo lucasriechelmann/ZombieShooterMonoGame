@@ -21,6 +21,7 @@ namespace ZombieShooter.DesktopGL
             services.AddSingleton<PlayerManager>();
             services.AddSingleton<EnemyManager>();
             services.AddSingleton<BulletManager>();
+            services.AddSingleton<SoundManager>();
             #endregion
             _cameraZoom = 3f;
         }

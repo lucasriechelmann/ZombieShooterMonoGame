@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
@@ -17,12 +18,14 @@ public class Stage1 : SceneECSBase
     PlayerManager _playerManager;
     EnemyManager _enemyManager;
     BulletManager _bulletManager;
+    SoundManager _soundManager;
     public Stage1(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         AddContentToLoad<Texture2D>("spritesheets/Sprites");
         _playerManager = serviceProvider.GetRequiredService<PlayerManager>();
         _enemyManager = serviceProvider.GetRequiredService<EnemyManager>();
         _bulletManager = serviceProvider.GetRequiredService<BulletManager>();
+        _soundManager = serviceProvider.GetRequiredService<SoundManager>();
     }
     protected override void OnInitialize()
     {
@@ -34,8 +37,9 @@ public class Stage1 : SceneECSBase
             .AddSystem(new UpdateSystem(_playerManager, _enemyManager, _bulletManager))
             .AddSystem(new PlayerInputSystem(_game, _playerManager, _bulletManager))
             .AddSystem(new BulletSystem(_game, _bulletManager, _playerManager, _textureAtlas.CreateSprite(2)))
-            .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager))
+            .AddSystem(new EnemySystem(_game, _textureAtlas.CreateSprite(1), _playerManager, _enemyManager, _sceneContent.Load<SoundEffect>("sfx/stepdirt_1")))
             .AddSystem(new MovementSystem())
+            .AddSystem(new FootstepSystem(_playerManager, _soundManager))
             .AddSystem(new CollisionSystem(_game, _playerManager, _enemyManager, _bulletManager))
             .AddSystem(new CameraFollowSystem(_game))
             .AddSystem(new HUDSystem(_game, _playerManager, _textureAtlas.CreateSprite(5)))
@@ -58,6 +62,7 @@ public class Stage1 : SceneECSBase
         entity.Attach(new SpriteComponent(_textureAtlas.CreateSprite(0)));
         entity.Attach(playerTransform);
         entity.Attach(new CircleColliderComponent(7));
+        entity.Attach(new FootstepComponent(_sceneContent.Load<SoundEffect>("sfx/footsteps"), 45f));
 
         return world;
     }
